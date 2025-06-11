@@ -1,0 +1,23 @@
+services:
+  jupyter:
+    image: scisaga/jupyterlab:py312-cuda124
+    restart: unless-stopped
+    runtime: nvidia
+    ports:
+      - "${JUPYTER_PORT}:8888"
+      - "${LOG_SERVER_PORT}:8765"
+      - "${WEB_SERVER_PORT}:5000"
+    environment:
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN}
+      - NVIDIA_DISABLE_REQUIRE=1
+      - NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES}
+    cpus: ${CPUS}
+    mem_limit: ${MEM}g
+    volumes:
+      - ${WORKSPACE_PATH}:/home/jovyan/work
+    entrypoint: /opt/init.sh
+    cap_add:
+      - SYS_ADMIN
+      - MKNOD
+    security_opt:
+      - apparmor:unconfined
