@@ -6,6 +6,7 @@ SHELL ["/bin/bash", "-c"]
 WORKDIR /opt
 VOLUME /opt
 ENV LANG=C.UTF-8
+ENV PATH="/usr/local/bin:/usr/bin:/bin:/root/.local/bin"
 
 # 更换为清华源，加快国内 apt 下载速度
 RUN echo $'deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy main restricted universe multiverse\n \
@@ -13,30 +14,29 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-updates main restricted u
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-backports main restricted universe multiverse\n \
 deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse' > /etc/apt/sources.list
 
+ENV DEBIAN_FRONTEND=noninteractive TZ=Asia/Shanghai
 # 安装通用系统工具
 RUN apt update && \
     apt install -qy --no-install-recommends \
-      vim wget git xz-utils yarn cron jq nethogs curl ntpdate iputils-ping && \
-    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+      vim wget git xz-utils yarn cron jq curl ntpdate iputils-ping \
+      software-properties-common build-essential \
+      libssl-dev libffi-dev
 
-# 安装 Python 和 Pip（支持自定义 Python 版本）
-# https://www.linuxcapable.com/how-to-install-python-3-10-on-ubuntu-linux/
-RUN apt install -y software-properties-common && \
-    add-apt-repository -y ppa:deadsnakes/ppa && \
-    apt install -y python{{ python_version }} python{{ python_version }}-distutils && \
+# 安装 Python（支持自定义版本）
+RUN add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt install -qy python{{ python_version }} python{{ python_version }}-venv python{{ python_version }}-dev && \
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python{{ python_version }} 1 && \
     update-alternatives --set python3 /usr/bin/python{{ python_version }} && \
-    apt install -y python-is-python3 && \
-    curl -sS https://bootstrap.pypa.io/get-pip.py | python3 && \
-    python3 -m pip install --upgrade pip && \
-    python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+    apt install -qy python-is-python3 && \
+    /usr/bin/python3 -m ensurepip --upgrade && \
+    /usr/bin/python3 -m pip install --upgrade pip && \
+    /usr/bin/python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 # S3 文件系统挂载工具
-# https://github.com/s3fs-fuse/s3fs-fuse
 RUN apt install -y s3fs
 
 # 安装通用 Python 库
-RUN pip install wheel
+RUN pip install --no-cache-dir wheel
 
 # -------------------- JupyterLab 核心及插件安装 --------------------
 
@@ -108,7 +108,7 @@ RUN pip install --no-cache-dir lckr_jupyterlab_variableinspector==3.1.0
 # https://github.com/jtpio/jupyterlab-system-monitor
 RUN pip install --no-cache-dir jupyterlab-system-monitor
 
-# nbdime：Notebook Git 差异可视化
+# Notebook Git 差异可视化
 # https://github.com/jupyter/nbdime
 RUN pip install --no-cache-dir nbdime && nbdime extensions --enable
 
@@ -161,7 +161,7 @@ c.ServerApp.logging_config = {\n\
 RUN mkdir -p /home/jovyan/.jupyter/lab/user-settings/@jupyterlab/translation-extension && \
     echo '{ "locale": "zh_CN" }' > /home/jovyan/.jupyter/lab/user-settings/@jupyterlab/translation-extension/plugin.jupyterlab-settings
 
-# 安装本地 logviewer 插件（日志查看器）
+# 安装本地 logviewer 插件（可选）
 COPY docker/logviewer /opt/logviewer
 RUN cd /opt/logviewer && pip install -r requirements.txt
 
@@ -176,12 +176,15 @@ RUN touch /var/log/cron.log && \
 # 设置默认工作目录（与挂载目录一致）
 WORKDIR /home/jovyan/work
 
-# 设置默认 Token（可被 docker-compose 或部署脚本覆盖）
+# 设置默认登录 Token（可被 docker-compose 覆盖）
 ENV JUPYTER_TOKEN=letmein
+
+# 健康检查
+HEALTHCHECK CMD curl --fail http://localhost:8888 || exit 1
 
 # 端口暴露
 EXPOSE 8765
 EXPOSE 8888
 
-# 启动命令：显式读取 Token，默认 shell 为 bash
+# 启动命令
 CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--allow-root", "--no-browser", "--ServerApp.token=${JUPYTER_TOKEN}"]

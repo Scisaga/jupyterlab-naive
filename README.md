@@ -1,6 +1,7 @@
 # 朴素JupyterLab容器开发环境
 
 本项目用于构建基于 **JupyterLab** 的 GPU/CPU 容器镜像，支持多版本 `Python` / `CUDA`，内置多个实用插件，并可在容器中训练模型和运行 Web 推理服务，供外部测试。
+- https://hub.docker.com/r/scisaga/jupyterlab
 
 
 ## 项目结构
