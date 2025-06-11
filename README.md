@@ -89,10 +89,6 @@ sudo bash scripts/setup_host.sh
 | 🕐 Cell 时间       | `jupyterlab_execute_time`                                                   | 显示每个 Cell 的执行时间       |
 | 🔬 变量检查          | `lckr_jupyterlab_variableinspector`                                         | 查看当前变量状态              |
 | 🖥️ 系统监控         | `jupyterlab-system-monitor`                                                 | 顶栏显示资源使用率             |
-| 🧱 顶部工具栏         | `jupyterlab-topbar-extension`                                               | 可扩展的 topbar 插件系统      |
-| 🏷️ Cell 标签      | `jupyterlab-celltags`                                                       | 给 Cell 添加标签，便于组织      |
-| 🧭 ToC 支持        | `jupyterlab-toc`                                                            | 支持自动生成文档目录            |
-| 🎨 UI 主题         | `jupyterlab-theme-solarized-dark`                                           | 暗色主题增强体验              |
 | 🔍 Notebook Diff | `nbdime`                                                                    | 查看两个 Notebook 的差异     |
 | 📊 数据可视化         | `plotly`                                                                    | 高交互性的图表组件             |
 | 🪪 实用库           | `boto3` `pyjwt`                                                             | AWS 访问 / JWT 解码支持     |
