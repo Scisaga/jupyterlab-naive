@@ -1,6 +1,6 @@
 services:
   jupyter:
-    image: scisaga/jupyterlab:py312-cuda124
+    image: scisaga/jupyterlab:py312-cuda128
     restart: unless-stopped
     runtime: nvidia
     ports:
@@ -10,11 +10,12 @@ services:
     environment:
       - JUPYTER_TOKEN=${JUPYTER_TOKEN}
       - NVIDIA_DISABLE_REQUIRE=1
+      - NVIDIA_DRIVER_CAPABILITIES=all
       - NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES}
     cpus: ${CPUS}
     mem_limit: ${MEM}g
     volumes:
-      - ${WORKSPACE_PATH}:/home/jovyan/work
+      - ../${WORKSPACE_PATH}:/home/jovyan/work
     entrypoint: /opt/init.sh
     cap_add:
       - SYS_ADMIN

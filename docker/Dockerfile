@@ -9,10 +9,19 @@ ENV LANG=C.UTF-8
 ENV PATH="/usr/local/bin:/usr/bin:/bin:/root/.local/bin"
 
 # 更换为清华源，加快国内 apt 下载速度
+{% if 'ubuntu24.04' in base_image %}
+RUN echo $'deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble main restricted universe multiverse\n \
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-updates main restricted universe multiverse\n \
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ noble-backports main restricted universe multiverse\n \
+deb http://security.ubuntu.com/ubuntu/ noble-security main restricted universe multiverse' > /etc/apt/sources.list
+{% elif 'ubuntu22.04' in base_image %}
 RUN echo $'deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy main restricted universe multiverse\n \
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-updates main restricted universe multiverse\n \
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-backports main restricted universe multiverse\n \
 deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse' > /etc/apt/sources.list
+{% else %}
+RUN echo "Unsupported base image: {{ base_image }}" && exit 1
+{% endif %}
 
 ENV DEBIAN_FRONTEND=noninteractive TZ=Asia/Shanghai
 # 安装通用系统工具
@@ -22,21 +31,25 @@ RUN apt update && \
       software-properties-common build-essential \
       libssl-dev libffi-dev
 
-# 安装 Python（支持自定义版本）
-RUN add-apt-repository -y ppa:deadsnakes/ppa && \
-    apt install -qy python{{ python_version }} python{{ python_version }}-venv python{{ python_version }}-dev && \
-    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python{{ python_version }} 1 && \
-    update-alternatives --set python3 /usr/bin/python{{ python_version }} && \
-    apt install -qy python-is-python3 && \
-    /usr/bin/python3 -m ensurepip --upgrade && \
-    /usr/bin/python3 -m pip install --upgrade pip && \
-    /usr/bin/python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-
 # S3 文件系统挂载工具
 RUN apt install -y s3fs
 
-# 安装通用 Python 库
-RUN pip install --no-cache-dir wheel
+# 安装 pip、venv、dev
+RUN apt install -y --no-install-recommends \
+      python3-pip python3-venv python3-dev python-is-python3
+
+# 配置 pip 为清华源
+RUN echo "[global]\nindex-url = https://pypi.tuna.tsinghua.edu.cn/simple" > /etc/pip.conf
+
+# 创建虚拟环境
+RUN python3 -m venv /opt/venv
+
+# 使用 venv pip 安装 wheel 和其他依赖
+RUN /opt/venv/bin/pip install --upgrade pip && \
+    /opt/venv/bin/pip install --no-cache-dir wheel
+
+# 设置 PATH，后续 pip、python 都使用虚拟环境
+ENV PATH="/opt/venv/bin:$PATH"
 
 # -------------------- JupyterLab 核心及插件安装 --------------------
 
@@ -186,5 +199,4 @@ HEALTHCHECK CMD curl --fail http://localhost:8888 || exit 1
 EXPOSE 8765
 EXPOSE 8888
 
-# 启动命令
-CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--allow-root", "--no-browser", "--ServerApp.token=${JUPYTER_TOKEN}"]
+CMD ["/bin/bash"]

@@ -1,3 +1,0 @@
-name: py312-cuda124
-base_image: nvidia/cuda:12.4.0-runtime-ubuntu22.04
-python_version: "3.12"

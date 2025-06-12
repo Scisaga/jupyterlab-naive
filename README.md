@@ -15,11 +15,11 @@ jupyterlab-naive/
 │ ├── Dockerfile # 镜像构建模板，支持 python_version / base_image 等变量
 │ ├── init.sh    # 容器初始化脚本（作为 entrypoint）
 │ └── logviewer/ # 自定义日志查看插件（可选）
-├── configs/
+├── config/
 │ └── py310-cuda121.yaml # 构建配置文件（base_image + python_version + tag）
 ├── docker-compose/
-│ ├── py310-cuda121.yml # 启动容器配置
-│ └── py312-cuda124.yml # 启动容器配置
+│ ├── .env              # 容器环境变量配置
+│ └── py310-cuda121.yml # 启动容器配置
 ├── setup_host.sh # 安装 NVIDIA 驱动、Docker、容器工具（适用于 GPU 主机）
 ├── setup_host_cpu.sh # 安装 Docker 环境（适用于 CPU 主机）
 ├── set_proxy.sh # 设置/取消 HTTP/HTTPS 代理（含 Docker daemon）
@@ -39,10 +39,12 @@ python build.py config/py310-cuda121.yaml
 ```bash
 docker compose -f docker-compose/py310-cuda121.yml up -d
 ```
-可以通过 .env 或 docker-compose.yml 控制：
+可以通过 docker-compose/.env 控制：
 - 使用几张 GPU（NVIDIA_VISIBLE_DEVICES）
 - 是否使用 GPU（设为 "" 表示 CPU 模式）
 - 资源配额（CPU / MEM）
+- HTTP/HTTPS代理
+- 默认登录token：**letmein**
 
 ### 宿主机环境准备
 

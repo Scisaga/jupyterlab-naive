@@ -2,6 +2,8 @@
 
 export SHELL=/bin/bash
 
+ENV PATH="/opt/venv/bin:$PATH"
+
 log_file="/opt/jupyter_server.log"
 update-ca-certificates
 echo "`date '+%Y-%m-%d %H:%M:%S,%3N'` - Init - INFO - start init sequence" >> ${log_file}
@@ -15,7 +17,8 @@ echo "`date '+%Y-%m-%d %H:%M:%S,%3N'` - Init - INFO - pypi source set" >> ${log_
 cd /opt/logviewer && python server.py --host 0.0.0.0 --prefix /opt &
 echo "`date '+%Y-%m-%d %H:%M:%S,%3N'` - Init - INFO - logviewer started" >> ${log_file}
 
-exec jupyter lab --allow-root --ResourceUseDisplay.mem_limit=$((mem*1024*1024*1024)) --ResourceUseDisplay.cpu_limit=${cpus}  --ResourceUseDisplay.track_cpu_percent=True &> /opt/jupyter_lab.log &
+# jupyter lab
+exec jupyter lab --ip=0.0.0.0 --allow-root --ServerApp.token=${JUPYTER_TOKEN} --ResourceUseDisplay.mem_limit=$((MEM*1024*1024*1024)) --ResourceUseDisplay.cpu_limit=${CPUS}  --ResourceUseDisplay.track_cpu_percent=True &> /opt/jupyter_lab.log &
 if [ $? -eq 0 ]; then
     echo "`date '+%Y-%m-%d %H:%M:%S,%3N'` - Init - INFO - Jupyter Lab started" >> ${log_file}
 else
