@@ -30,6 +30,9 @@ jupyterlab-naive/
 
 ### 构建镜像
 
+基础镜像选取
+- https://hub.docker.com/r/nvidia/cuda/tags
+
 ```bash
 python build.py config/py310-cuda121.yaml
 ```
@@ -74,10 +77,6 @@ sudo bash scripts/setup_host.sh
 ./setup_proxy.sh off
 ```
 支持系统级 / Docker daemon 的代理配置，适配公司内网和 VPN 环境。
-
-## 构建镜像
-### 基础镜像选取
-- https://hub.docker.com/r/nvidia/cuda/tags
 
 ## 已集成 JupyterLab 插件
 | 分类               | 插件                                                                          | 说明                    |
