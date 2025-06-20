@@ -19,7 +19,7 @@ ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
 echo "[INFO] Installing NVIDIA Driver..."
 add-apt-repository -y ppa:graphics-drivers/ppa
 apt update
-apt install -y nvidia-driver-555
+apt install -y nvidia-driver-550
 modprobe nvidia || true
 nvidia-smi
 
