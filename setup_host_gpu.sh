@@ -25,10 +25,19 @@ nvidia-smi
 
 # ---------------- NVIDIA Container Toolkit 安装 ----------------
 echo "[INFO] Installing NVIDIA Container Toolkit..."
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID)  # e.g., ubuntu22.04
+# 自动获取系统版本并适配
+distribution=$(. /etc/os-release; echo ${ID}${VERSION_ID})
+if [[ "$distribution" == "ubuntu24.04" ]]; then
+    echo "[WARN] Ubuntu 24.04 暂未正式支持，回退使用 ubuntu22.04 的镜像源"
+    distribution="ubuntu22.04"
+fi
+
+# 安装 GPG key
 curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | \
   gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
 
+
+# 写入源列表
 curl -s -L https://nvidia.github.io/libnvidia-container/stable/${distribution}/nvidia-container-toolkit.list | \
   sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
   tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
@@ -42,7 +51,7 @@ systemctl restart docker
 
 # ---------------- Python 工具安装（nvitop） ----------------
 echo "[INFO] Installing nvitop..."
-pip3 install -U nvitop
+apt install nvitop
 
 # ---------------- 验证 NVIDIA Docker 正常工作 ----------------
 echo "[INFO] Running test container..."
