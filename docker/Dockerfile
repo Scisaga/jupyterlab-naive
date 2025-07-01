@@ -63,7 +63,7 @@ RUN pip install --no-cache-dir pipreqs pipreqsnb
 
 # 资源监控插件
 # https://github.com/jupyter-server/jupyter-resource-usage
-RUN pip install --no-cache-dir jupyter-resource-usage==1.1.0
+RUN pip install --no-cache-dir jupyter-resource-usage==1.1.1
 
 # Git 集成插件（支持 Git 操作可视化）
 # https://github.com/jupyterlab/jupyterlab-git
@@ -116,10 +116,6 @@ RUN pip install --no-cache-dir jupyterlab_execute_time==3.1.0
 # 变量查看器：Jupyter 版的 MATLAB Workspace
 # https://github.com/jupyterlab-contrib/jupyterlab-variableInspector
 RUN pip install --no-cache-dir lckr_jupyterlab_variableinspector==3.1.0
-
-# 系统资源监控侧边栏（CPU/内存/磁盘）增强版
-# https://github.com/jtpio/jupyterlab-system-monitor
-RUN pip install --no-cache-dir jupyterlab-system-monitor
 
 # Notebook Git 差异可视化
 # https://github.com/jupyter/nbdime
