@@ -2,10 +2,9 @@
 
 export SHELL=/bin/bash
 
-ENV PATH="/opt/venv/bin:$PATH"
+export PATH="/opt/venv/bin:$PATH"
 
 log_file="/opt/jupyter_server.log"
-update-ca-certificates
 echo "`date '+%Y-%m-%d %H:%M:%S,%3N'` - Init - INFO - start init sequence" >> ${log_file}
 
 # pypi repo
