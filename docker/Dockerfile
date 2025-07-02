@@ -91,7 +91,7 @@ RUN pip install --no-cache-dir 'jupyterlab>=4.0.0,<5.0.0a0' jupyterlab-lsp 'pyth
 
 # 代码格式化插件（支持 black、isort 等格式化器）
 # https://github.com/ryantam626/jupyterlab_code_formatter
-RUN pip install --no-cache-dir jupyterlab-code-formatter==2.2.1
+RUN pip install --no-cache-dir jupyterlab-code-formatter
 
 # Python 代码格式化器：black
 # https://pypi.org/project/black/
@@ -107,7 +107,7 @@ RUN pip install --no-cache-dir jupyterlab-translate jupyterlab-language-pack-zh-
 
 # Plotly 可视化库（支持图形交互）
 # https://plotly.com/python/
-RUN pip install --no-cache-dir plotly==5.18.0
+RUN pip install --no-cache-dir plotly
 
 # 显示代码执行时间的插件（适合教学、性能调优）
 # https://github.com/deshaw/jupyterlab-execute-time
@@ -116,6 +116,9 @@ RUN pip install --no-cache-dir jupyterlab_execute_time==3.1.0
 # 变量查看器：Jupyter 版的 MATLAB Workspace
 # https://github.com/jupyterlab-contrib/jupyterlab-variableInspector
 RUN pip install --no-cache-dir lckr_jupyterlab_variableinspector==3.1.0
+
+# https://github.com/jupyter-server/jupyter-resource-usage
+RUN pip install jupyter-resource-usage
 
 # Notebook Git 差异可视化
 # https://github.com/jupyter/nbdime

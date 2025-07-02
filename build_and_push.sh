@@ -14,15 +14,11 @@ for config in $CONFIG_DIR/*.yaml; do
   name=$(basename "$config" .yaml)
   image_tag="$DOCKER_NAMESPACE/jupyterlab:$name"
 
-  echo "渲染构建配置: $config"
+  echo "构建配置: $config"
   python build.py "$config"
 
-  echo "构建镜像: $image_tag"
-  docker buildx build \
-    -f "$GENERATED_DIR/$name/Dockerfile" \
-    -t "$image_tag" \
-    . \
-    --push
+  echo "推送: $image_tag"
+  docker push "$image_tag"
 
   echo "已推送镜像: $image_tag"
 done

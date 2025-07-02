@@ -17,7 +17,15 @@ cd /opt/logviewer && python server.py --host 0.0.0.0 --prefix /opt &
 echo "`date '+%Y-%m-%d %H:%M:%S,%3N'` - Init - INFO - logviewer started" >> ${log_file}
 
 # jupyter lab
-exec jupyter lab --ip=0.0.0.0 --allow-root --ServerApp.token=${JUPYTER_TOKEN} --ResourceUseDisplay.mem_limit=$((MEM*1024*1024*1024)) --ResourceUseDisplay.cpu_limit=${CPUS}  --ResourceUseDisplay.track_cpu_percent=True &> /opt/jupyter_lab.log &
+exec jupyter lab \
+    --ip=0.0.0.0 \
+    --allow-root \
+    --ServerApp.base_url="${JUPYTER_BASE_URL}" \
+    --ServerApp.token=${JUPYTER_TOKEN} \
+    --ResourceUseDisplay.mem_limit=$((MEM*1024*1024*1024)) \
+    --ResourceUseDisplay.cpu_limit=${CPUS} \
+    --ResourceUseDisplay.track_cpu_percent=True &> /opt/jupyter_lab.log &
+    
 if [ $? -eq 0 ]; then
     echo "`date '+%Y-%m-%d %H:%M:%S,%3N'` - Init - INFO - Jupyter Lab started" >> ${log_file}
 else
