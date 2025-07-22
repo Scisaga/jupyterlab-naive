@@ -11,7 +11,7 @@ def render_template(config_path):
     with open(config_path) as f:
         config = yaml.safe_load(f)
 
-    with open(os.path.join(PROJECT_ROOT, "docker", "Dockerfile")) as f:
+    with open(os.path.join(PROJECT_ROOT, "docker", "Dockerfile"), encoding='utf-8') as f:
         template = Template(f.read())
 
     output = template.render(**config)

@@ -28,6 +28,11 @@ jupyterlab-naive/
 
 ## 镜像构建与部署
 
+### 安装依赖
+```bash
+pip install "PyYAML>=5.4" "Jinja2>=3.1.0"
+```
+
 ### 构建镜像
 
 基础镜像选取
