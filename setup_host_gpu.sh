@@ -51,7 +51,7 @@ systemctl restart docker
 
 # ---------------- Python 工具安装（nvitop） ----------------
 echo "[INFO] Installing nvitop..."
-apt install nvitop
+apt install nvtop
 
 # ---------------- 验证 NVIDIA Docker 正常工作 ----------------
 echo "[INFO] Running test container..."
