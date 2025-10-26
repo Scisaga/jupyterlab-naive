@@ -3,23 +3,23 @@ set -e
 
 # ---------------- Docker 安装（使用阿里云镜像） ----------------
 echo "[INFO] Installing Docker..."
-curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
-systemctl enable docker
-systemctl start docker
+. /etc/os-release && echo "$VERSION_CODENAME"
+# 替换为官方源（amd64；若是 arm64 把 amd64 改为 arm64）
+echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $VERSION_CODENAME stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list
 
-# ---------------- Docker Compose 安装（V2 推荐方式） ----------------
-echo "[INFO] Installing Docker Compose..."
-DOCKER_COMPOSE_VERSION=v2.29.7
-curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" \
-  -o /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
-ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
+sudo apt-get update
+
+sudo apt-get install -y \
+  docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
+
+sudo systemctl enable --now docker
 
 # ---------------- NVIDIA 驱动（可选指定版本） ----------------
 echo "[INFO] Installing NVIDIA Driver..."
 add-apt-repository -y ppa:graphics-drivers/ppa
 apt update
-apt install -y nvidia-driver-550
+apt install -y nvidia-driver-580
 modprobe nvidia || true
 nvidia-smi
 
